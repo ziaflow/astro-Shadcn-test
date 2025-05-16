@@ -91,44 +91,57 @@ function App() {
     }
   }, []);
 
+  // Add a function to recalculate the theme message for the current mode
+  function getThemeMessage(
+    now: Date,
+    location: { lat: number; lng: number },
+    isDark: boolean
+  ) {
+    const times = SunCalc.getTimes(now, location.lat, location.lng);
+    let nextChange = isDark ? times.sunrise : times.sunset;
+    if (nextChange.getTime() - now.getTime() < 0) {
+      // If the next event is in the past, add 1 day
+      nextChange = new Date(nextChange.getTime() + 24 * 60 * 60 * 1000);
+    }
+    const timeUntilChange = new Date(nextChange.getTime() - now.getTime());
+    const hours = Math.floor(timeUntilChange.getTime() / (1000 * 60 * 60));
+    const minutes = Math.floor(
+      (timeUntilChange.getTime() % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    return isDark
+      ? `rise in ${hours}h ${minutes}m`
+      : `set in ${hours}h ${minutes}m`;
+  }
+
   useEffect(() => {
     if (location) {
       const updateTheme = () => {
         const now = new Date();
         const times = SunCalc.getTimes(now, location.lat, location.lng);
-
-        // Add 30 minutes buffer to sunrise/sunset for smoother transition
         const sunrise = new Date(times.sunrise.getTime() + 30 * 60000);
         const sunset = new Date(times.sunset.getTime() - 30 * 60000);
-
         const isDay = now > sunrise && now < sunset;
-
-        // Only update theme if in auto mode
         if (isAutoTheme) {
           setIsDarkMode(!isDay);
         }
-
-        // Always update theme message
-        const nextChange = isDay ? times.sunset : times.sunrise;
-        const timeUntilChange = new Date(nextChange.getTime() - now.getTime());
-        const hours = Math.floor(timeUntilChange.getTime() / (1000 * 60 * 60));
-        const minutes = Math.floor(
-          (timeUntilChange.getTime() % (1000 * 60 * 60)) / (1000 * 60)
-        );
-
+        // Always update theme message for the current mode
         setThemeMessage(
-          isDay
-            ? `sunset in ${hours}h ${minutes}m`
-            : `sunrise in ${hours}h ${minutes}m`
+          getThemeMessage(now, location, isAutoTheme ? !isDay : isDarkMode)
         );
       };
-
-      // Update theme immediately and then every minute
       updateTheme();
       const interval = setInterval(updateTheme, 60000);
       return () => clearInterval(interval);
     }
-  }, [location, isAutoTheme]);
+  }, [location, isAutoTheme, isDarkMode]);
+
+  // Update theme message immediately when toggling theme manually
+  useEffect(() => {
+    if (location && !isAutoTheme) {
+      const now = new Date();
+      setThemeMessage(getThemeMessage(now, location, isDarkMode));
+    }
+  }, [isDarkMode, isAutoTheme, location]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -141,10 +154,8 @@ function App() {
   const handleThemeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (e.altKey) {
-      // Alt + click toggles auto/manual mode
       setIsAutoTheme(!isAutoTheme);
     } else {
-      // Regular click toggles theme
       setIsDarkMode(!isDarkMode);
       if (isAutoTheme) {
         setIsAutoTheme(false);
@@ -160,12 +171,14 @@ function App() {
       >
         <header className="flex justify-between items-center mb-16">
           <h1 className="text-2xl font-bold">alexander nicita</h1>
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-sm hover:text-muted-foreground transition-colors"
-          >
-            {isMenuOpen ? "close" : "menu"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-sm hover:text-muted-foreground transition-colors"
+            >
+              menu
+            </button>
+          </div>
         </header>
 
         <main className="max-w-2xl mx-auto">
@@ -272,52 +285,111 @@ function App() {
           </footer>
         </main>
 
-        {/* Theme indicator and toggle */}
-        <div className="fixed bottom-8 right-8 flex items-center gap-3 text-sm text-muted-foreground">
-          <span>{themeMessage}</span>
-          <button
-            onClick={handleThemeClick}
-            className="p-2 hover:text-foreground transition-colors"
-            title="Click to toggle theme (Alt + click to toggle auto mode)"
-          >
-            {isDarkMode ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+        {/* Sunrise/Sunset indicator: responsive placement */}
+        {/* On mobile, show as a row at the bottom of main content. On md+, fixed bottom right. */}
+        <div>
+          {/* Mobile: show inside main content, centered, only on small screens */}
+          <div className="block md:hidden w-full flex justify-center mt-8">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleThemeClick}
+                className="p-1 rounded-full border border-border hover:border-foreground transition-colors flex items-center justify-center"
+                style={{ minWidth: 28, minHeight: 28 }}
+                title="Click to toggle theme (Alt + click to toggle auto mode)"
               >
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2" />
-                <path d="M12 20v2" />
-                <path d="m4.93 4.93 1.41 1.41" />
-                <path d="m17.66 17.66 1.41 1.41" />
-                <path d="M2 12h2" />
-                <path d="M20 12h2" />
-                <path d="m6.34 17.66-1.41 1.41" />
-                <path d="m19.07 4.93-1.41 1.41" />
-              </svg>
-            )}
-          </button>
+                {isDarkMode ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v2" />
+                    <path d="M12 20v2" />
+                    <path d="m4.93 4.93 1.41 1.41" />
+                    <path d="m17.66 17.66 1.41 1.41" />
+                    <path d="M2 12h2" />
+                    <path d="M20 12h2" />
+                    <path d="m6.34 17.66-1.41 1.41" />
+                    <path d="m19.07 4.93-1.41 1.41" />
+                  </svg>
+                )}
+              </button>
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                {themeMessage}
+              </span>
+            </div>
+          </div>
+          {/* Desktop: fixed bottom right, hidden on mobile */}
+          <div className="hidden md:flex fixed z-40 bottom-8 right-8 items-center gap-2">
+            <button
+              onClick={handleThemeClick}
+              className="p-1 rounded-full border border-border hover:border-foreground transition-colors flex items-center justify-center"
+              style={{ minWidth: 28, minHeight: 28 }}
+              title="Click to toggle theme (Alt + click to toggle auto mode)"
+            >
+              {isDarkMode ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2" />
+                  <path d="M12 20v2" />
+                  <path d="m4.93 4.93 1.41 1.41" />
+                  <path d="m17.66 17.66 1.41 1.41" />
+                  <path d="M2 12h2" />
+                  <path d="M20 12h2" />
+                  <path d="m6.34 17.66-1.41 1.41" />
+                  <path d="m19.07 4.93-1.41 1.41" />
+                </svg>
+              )}
+            </button>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+              {themeMessage}
+            </span>
+          </div>
         </div>
       </div>
     </>
