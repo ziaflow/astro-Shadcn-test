@@ -192,14 +192,6 @@ function App() {
               consulting
             </a>
             <a
-              href="https://nicitaphoto.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-muted-foreground hover:text-foreground transition-colors"
-            >
-              photography
-            </a>
-            <a
               href="https://academiccommons.columbia.edu/doi/10.7916/wxey-cr42"
               target="_blank"
               rel="noopener noreferrer"
