@@ -255,7 +255,7 @@ function App() {
           <div className="block md:hidden w-full flex justify-center mt-8">
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground lowercase">
-                nyc
+                bos
               </span>
               <button
                 onClick={handleThemeClick}
@@ -310,7 +310,7 @@ function App() {
           </div>
           {/* Desktop: fixed bottom right, hidden on mobile */}
           <div className="hidden md:flex fixed z-40 bottom-8 right-8 items-center gap-2">
-            <span className="text-sm text-muted-foreground lowercase">nyc</span>
+            <span className="text-sm text-muted-foreground lowercase">bos</span>
             <button
               onClick={handleThemeClick}
               className="p-1 rounded-full border border-border hover:border-foreground transition-colors flex items-center justify-center"
