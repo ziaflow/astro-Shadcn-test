@@ -11,11 +11,17 @@ interface Ball {
 interface Flipper {
   x: number;
   y: number;
-  width: number;
-  height: number;
   angle: number;
   targetAngle: number;
   isPressed: boolean;
+}
+
+interface Bumper {
+  x: number;
+  y: number;
+  radius: number;
+  hit: boolean;
+  pulse: number;
 }
 
 const PinballGame = () => {
@@ -24,118 +30,105 @@ const PinballGame = () => {
   const [lives, setLives] = useState(3);
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [time, setTime] = useState(0);
 
   const ball = useRef<Ball>({
     x: 400,
-    y: 300,
+    y: 600,
     vx: 0,
     vy: 0,
-    radius: 8,
+    radius: 6,
   });
 
   const leftFlipper = useRef<Flipper>({
     x: 300,
-    y: 500,
-    width: 80,
-    height: 15,
-    angle: -0.3,
-    targetAngle: -0.3,
+    y: 650,
+    angle: -0.4,
+    targetAngle: -0.4,
     isPressed: false,
   });
 
   const rightFlipper = useRef<Flipper>({
     x: 500,
-    y: 500,
-    width: 80,
-    height: 15,
-    angle: 0.3,
-    targetAngle: 0.3,
+    y: 650,
+    angle: 0.4,
+    targetAngle: 0.4,
     isPressed: false,
   });
 
-  const bumpers = useRef([
-    { x: 200, y: 200, radius: 30, hit: false },
-    { x: 600, y: 200, radius: 30, hit: false },
-    { x: 400, y: 150, radius: 30, hit: false },
-  ]);
-
-  const walls = useRef([
-    { x: 0, y: 0, width: 800, height: 20 }, // top
-    { x: 0, y: 580, width: 800, height: 20 }, // bottom
-    { x: 0, y: 0, width: 20, height: 600 }, // left
-    { x: 780, y: 0, width: 20, height: 600 }, // right
+  const bumpers = useRef<Bumper[]>([
+    { x: 200, y: 200, radius: 25, hit: false, pulse: 0 },
+    { x: 600, y: 200, radius: 25, hit: false, pulse: 0 },
+    { x: 400, y: 150, radius: 25, hit: false, pulse: 0 },
+    { x: 300, y: 300, radius: 20, hit: false, pulse: 0 },
+    { x: 500, y: 300, radius: 20, hit: false, pulse: 0 },
   ]);
 
   const animationRef = useRef<number>();
 
   const resetBall = () => {
     ball.current.x = 400;
-    ball.current.y = 300;
-    ball.current.vx = (Math.random() - 0.5) * 4;
-    ball.current.vy = -2;
+    ball.current.y = 600;
+    ball.current.vx = (Math.random() - 0.5) * 3;
+    ball.current.vy = -4;
   };
 
   const updateGame = () => {
     if (gameOver || !gameStarted) return;
 
-    // Update ball physics
-    ball.current.vy += 0.2; // gravity
+    setTime((prev) => prev + 1);
+
+    // Update ball physics with elegant gravity
+    ball.current.vy += 0.15;
     ball.current.x += ball.current.vx;
     ball.current.y += ball.current.vy;
 
-    // Ball friction
-    ball.current.vx *= 0.995;
+    // Elegant friction
+    ball.current.vx *= 0.998;
 
-    // Update flippers
+    // Update flippers with smooth animation
     if (leftFlipper.current.isPressed) {
       leftFlipper.current.targetAngle = 0.3;
     } else {
-      leftFlipper.current.targetAngle = -0.3;
+      leftFlipper.current.targetAngle = -0.4;
     }
 
     if (rightFlipper.current.isPressed) {
       rightFlipper.current.targetAngle = -0.3;
     } else {
-      rightFlipper.current.targetAngle = 0.3;
+      rightFlipper.current.targetAngle = 0.4;
     }
 
     leftFlipper.current.angle +=
-      (leftFlipper.current.targetAngle - leftFlipper.current.angle) * 0.2;
+      (leftFlipper.current.targetAngle - leftFlipper.current.angle) * 0.15;
     rightFlipper.current.angle +=
-      (rightFlipper.current.targetAngle - rightFlipper.current.angle) * 0.2;
+      (rightFlipper.current.targetAngle - rightFlipper.current.angle) * 0.15;
 
-    // Check wall collisions
-    walls.current.forEach((wall) => {
-      if (
-        ball.current.x - ball.current.radius < wall.x + wall.width &&
-        ball.current.x + ball.current.radius > wall.x &&
-        ball.current.y - ball.current.radius < wall.y + wall.height &&
-        ball.current.y + ball.current.radius > wall.y
-      ) {
-        if (wall.x === 0 || wall.x === 780) {
-          // side walls
-          ball.current.vx *= -0.8;
-          ball.current.x =
-            wall.x === 0 ? ball.current.radius : 780 - ball.current.radius;
-        } else if (wall.y === 0) {
-          // top wall
-          ball.current.vy *= -0.8;
-          ball.current.y = ball.current.radius;
-        } else if (wall.y === 580) {
-          // bottom wall - lose life
-          setLives((prev) => {
-            if (prev <= 1) {
-              setGameOver(true);
-              return 0;
-            }
-            resetBall();
-            return prev - 1;
-          });
+    // Wall collisions with clean bounces
+    if (ball.current.x - ball.current.radius < 0) {
+      ball.current.x = ball.current.radius;
+      ball.current.vx *= -0.8;
+    }
+    if (ball.current.x + ball.current.radius > 800) {
+      ball.current.x = 800 - ball.current.radius;
+      ball.current.vx *= -0.8;
+    }
+    if (ball.current.y - ball.current.radius < 0) {
+      ball.current.y = ball.current.radius;
+      ball.current.vy *= -0.8;
+    }
+    if (ball.current.y + ball.current.radius > 700) {
+      setLives((prev) => {
+        if (prev <= 1) {
+          setGameOver(true);
+          return 0;
         }
-      }
-    });
+        resetBall();
+        return prev - 1;
+      });
+    }
 
-    // Check bumper collisions
+    // Bumper collisions with artistic feedback
     bumpers.current.forEach((bumper) => {
       const dx = ball.current.x - bumper.x;
       const dy = ball.current.y - bumper.y;
@@ -145,28 +138,35 @@ const PinballGame = () => {
         if (!bumper.hit) {
           setScore((prev) => prev + 100);
           bumper.hit = true;
+          bumper.pulse = 1;
           setTimeout(() => {
             bumper.hit = false;
-          }, 1000);
+          }, 800);
         }
 
-        // Bounce ball away from bumper
+        // Artistic bounce
         const angle = Math.atan2(dy, dx);
-        ball.current.vx = Math.cos(angle) * 8;
-        ball.current.vy = Math.sin(angle) * 8;
+        const force = 6 + Math.random() * 2;
+        ball.current.vx = Math.cos(angle) * force;
+        ball.current.vy = Math.sin(angle) * force;
+      }
+
+      // Pulse animation
+      if (bumper.pulse > 0) {
+        bumper.pulse *= 0.9;
       }
     });
 
-    // Check flipper collisions
+    // Flipper collisions with smooth physics
     [leftFlipper.current, rightFlipper.current].forEach((flipper) => {
       const dx = ball.current.x - flipper.x;
       const dy = ball.current.y - flipper.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < ball.current.radius + flipper.width / 2) {
+      if (distance < ball.current.radius + 30) {
         if (flipper.isPressed) {
-          ball.current.vy = -8;
-          ball.current.vx += (Math.random() - 0.5) * 4;
+          ball.current.vy = -8 - Math.random() * 2;
+          ball.current.vx += (Math.random() - 0.5) * 3;
           setScore((prev) => prev + 10);
         }
       }
@@ -182,38 +182,66 @@ const PinballGame = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Clear canvas
-    ctx.fillStyle = "#1a1a1a";
-    ctx.fillRect(0, 0, 800, 600);
+    // Clean background with subtle gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 700);
+    gradient.addColorStop(0, "#0a0a0a");
+    gradient.addColorStop(1, "#1a1a1a");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 800, 700);
 
-    // Draw walls
-    ctx.fillStyle = "#333";
-    walls.current.forEach((wall) => {
-      ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
-    });
+    // Draw elegant walls
+    ctx.strokeStyle = "#333";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(800, 0);
+    ctx.lineTo(800, 700);
+    ctx.lineTo(0, 700);
+    ctx.stroke();
 
-    // Draw bumpers
+    // Draw bumpers with artistic styling
     bumpers.current.forEach((bumper) => {
       ctx.beginPath();
-      ctx.arc(bumper.x, bumper.y, bumper.radius, 0, Math.PI * 2);
-      ctx.fillStyle = bumper.hit ? "#ff6b6b" : "#4ecdc4";
+      ctx.arc(
+        bumper.x,
+        bumper.y,
+        bumper.radius + bumper.pulse * 5,
+        0,
+        Math.PI * 2
+      );
+
+      if (bumper.hit) {
+        ctx.fillStyle = `rgba(255, 107, 107, ${0.8 + bumper.pulse * 0.2})`;
+      } else {
+        ctx.fillStyle = `rgba(78, 205, 196, ${0.6 + Math.sin(time * 0.1) * 0.2})`;
+      }
       ctx.fill();
+
+      // Elegant border
       ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1;
       ctx.stroke();
     });
 
-    // Draw flippers
+    // Draw flippers with clean geometry
     [leftFlipper.current, rightFlipper.current].forEach((flipper) => {
       ctx.save();
       ctx.translate(flipper.x, flipper.y);
       ctx.rotate(flipper.angle);
+
+      // Flipper body
       ctx.fillStyle = flipper.isPressed ? "#ff6b6b" : "#4ecdc4";
-      ctx.fillRect(0, -flipper.height / 2, flipper.width, flipper.height);
+      ctx.fillRect(0, -8, 60, 16);
+
+      // Flipper tip
+      ctx.beginPath();
+      ctx.arc(60, 0, 8, 0, Math.PI * 2);
+      ctx.fill();
+
       ctx.restore();
     });
 
-    // Draw ball
+    // Draw ball with subtle glow
     ctx.beginPath();
     ctx.arc(
       ball.current.x,
@@ -222,35 +250,65 @@ const PinballGame = () => {
       0,
       Math.PI * 2
     );
-    ctx.fillStyle = "#ff6b6b";
+
+    // Ball gradient
+    const ballGradient = ctx.createRadialGradient(
+      ball.current.x - 2,
+      ball.current.y - 2,
+      0,
+      ball.current.x,
+      ball.current.y,
+      ball.current.radius
+    );
+    ballGradient.addColorStop(0, "#fff");
+    ballGradient.addColorStop(1, "#ff6b6b");
+    ctx.fillStyle = ballGradient;
     ctx.fill();
 
-    // Draw UI
+    // Elegant UI
     ctx.fillStyle = "#fff";
-    ctx.font = "24px Arial";
-    ctx.fillText(`Score: ${score}`, 20, 30);
-    ctx.fillText(`Lives: ${lives}`, 20, 60);
+    ctx.font = '16px "Courier New", monospace';
+    ctx.fillText(`SCORE: ${score.toString().padStart(6, "0")}`, 20, 30);
+    ctx.fillText(`LIVES: ${lives}`, 20, 50);
+    ctx.fillText(
+      `TIME: ${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, "0")}`,
+      20,
+      70
+    );
 
+    // Game over screen with artistic typography
     if (gameOver) {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-      ctx.fillRect(0, 0, 800, 600);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+      ctx.fillRect(0, 0, 800, 700);
+
       ctx.fillStyle = "#fff";
-      ctx.font = "48px Arial";
+      ctx.font = 'bold 48px "Courier New", monospace';
       ctx.textAlign = "center";
       ctx.fillText("GAME OVER", 400, 250);
-      ctx.font = "24px Arial";
-      ctx.fillText(`Final Score: ${score}`, 400, 300);
-      ctx.fillText("Click to restart", 400, 350);
+
+      ctx.font = '24px "Courier New", monospace';
+      ctx.fillText(`FINAL SCORE: ${score}`, 400, 300);
+      ctx.fillText("CLICK TO RESTART", 400, 350);
     } else if (!gameStarted) {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-      ctx.fillRect(0, 0, 800, 600);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+      ctx.fillRect(0, 0, 800, 700);
+
       ctx.fillStyle = "#fff";
-      ctx.font = "48px Arial";
+      ctx.font = 'bold 48px "Courier New", monospace';
       ctx.textAlign = "center";
       ctx.fillText("PINBALL", 400, 250);
-      ctx.font = "24px Arial";
-      ctx.fillText("Click to start", 400, 300);
-      ctx.fillText("Use A/D or Left/Right arrows for flippers", 400, 350);
+
+      ctx.font = '18px "Courier New", monospace';
+      ctx.fillText("A/D OR ARROW KEYS FOR FLIPPERS", 400, 300);
+      ctx.fillText("CLICK TO START", 400, 330);
+
+      // Artistic decoration
+      ctx.strokeStyle = "#4ecdc4";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(200, 400);
+      ctx.lineTo(600, 400);
+      ctx.stroke();
     }
   };
 
@@ -286,10 +344,12 @@ const PinballGame = () => {
         setGameOver(false);
         setScore(0);
         setLives(3);
+        setTime(0);
         resetBall();
         setGameStarted(true);
       } else if (!gameStarted) {
         setGameStarted(true);
+        setTime(0);
         resetBall();
       }
     };
@@ -311,24 +371,26 @@ const PinballGame = () => {
   }, [gameOver, gameStarted]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-4">Pinball Game</h1>
-        <p className="text-muted-foreground">
-          Use A/D or Left/Right arrow keys to control the flippers
+        <h1 className="text-4xl font-bold mb-4 text-white font-mono">
+          PINBALL
+        </h1>
+        <p className="text-gray-400 font-mono">
+          A/D or Left/Right arrows for flippers
         </p>
       </div>
       <canvas
         ref={canvasRef}
         width={800}
-        height={600}
-        className="border border-border rounded-lg shadow-lg"
+        height={700}
+        className="border border-gray-800 rounded-lg shadow-2xl"
         style={{ maxWidth: "100%", height: "auto" }}
       />
       <div className="mt-8">
         <a
           href="/"
-          className="text-muted-foreground hover:text-foreground transition-colors underline"
+          className="text-gray-400 hover:text-white transition-colors underline font-mono"
         >
           ← Back to home
         </a>
