@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SunCalc from "suncalc";
 import "./App.css";
+import PinballGame from "./components/PinballGame";
 
 const SF_LOCATION = { lat: 37.7749, lng: -122.4194 };
 
@@ -76,7 +78,7 @@ function getThemeMessage(now: Date, isDark: boolean) {
   return `${hours}h ${minutes}m`;
 }
 
-function App() {
+function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isAutoTheme, setIsAutoTheme] = useState(true);
@@ -206,6 +208,12 @@ function App() {
               className="block text-muted-foreground hover:text-foreground transition-colors"
             >
               os
+            </a>
+            <a
+              href="/pinball"
+              className="block text-muted-foreground hover:text-foreground transition-colors"
+            >
+              pinball
             </a>
           </nav>
 
@@ -364,6 +372,17 @@ function App() {
         </div>
       </div>
     </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/pinball" element={<PinballGame />} />
+      </Routes>
+    </Router>
   );
 }
 
