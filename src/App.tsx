@@ -209,12 +209,6 @@ function HomePage() {
             >
               os
             </a>
-            <a
-              href="/pinball"
-              className="block text-muted-foreground hover:text-foreground transition-colors"
-            >
-              pinball
-            </a>
           </nav>
 
           <footer className="mt-16 text-sm text-muted-foreground">
