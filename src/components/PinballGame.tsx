@@ -35,44 +35,49 @@ const PinballGame = () => {
   const [feedbackText, setFeedbackText] = useState("");
 
   const ball = useRef<Ball>({
-    x: 400,
+    x: 770,
     y: 600,
     vx: 0,
-    vy: 0,
-    radius: 6,
+    vy: -15,
+    radius: 7,
   });
 
   const leftFlipper = useRef<Flipper>({
-    x: 320,
+    x: 340,
     y: 650,
-    angle: -0.4,
-    targetAngle: -0.4,
+    angle: -0.5,
+    targetAngle: -0.5,
     isPressed: false,
   });
 
   const rightFlipper = useRef<Flipper>({
-    x: 480,
+    x: 460,
     y: 650,
-    angle: Math.PI - 0.4,
-    targetAngle: Math.PI - 0.4,
+    angle: Math.PI - 0.5,
+    targetAngle: Math.PI - 0.5,
     isPressed: false,
   });
 
   const bumpers = useRef<Bumper[]>([
-    { x: 200, y: 200, radius: 25, hit: false, pulse: 0 },
-    { x: 600, y: 200, radius: 25, hit: false, pulse: 0 },
-    { x: 400, y: 150, radius: 25, hit: false, pulse: 0 },
-    { x: 300, y: 300, radius: 20, hit: false, pulse: 0 },
-    { x: 500, y: 300, radius: 20, hit: false, pulse: 0 },
+    { x: 400, y: 150, radius: 30, hit: false, pulse: 0 },
+    { x: 300, y: 250, radius: 25, hit: false, pulse: 0 },
+    { x: 500, y: 250, radius: 25, hit: false, pulse: 0 },
+    { x: 400, y: 350, radius: 20, hit: false, pulse: 0 },
   ]);
+
+  const walls = useRef([
+    // Launch lane wall
+    { x: 720, y: 200, width: 10, height: 500 },
+  ]);
+  const centerPost = useRef({ x: 400, y: 680, radius: 5 });
 
   const animationRef = useRef<number>();
 
   const resetBall = () => {
-    ball.current.x = 750;
+    ball.current.x = 770;
     ball.current.y = 600;
-    ball.current.vx = -2;
-    ball.current.vy = -12;
+    ball.current.vx = 0;
+    ball.current.vy = -15; // Launch speed
   };
 
   const updateGame = () => {
@@ -81,7 +86,7 @@ const PinballGame = () => {
     setTime((prev) => prev + 1);
 
     // Update ball physics with elegant gravity
-    ball.current.vy += 0.08;
+    ball.current.vy += 0.05;
     ball.current.x += ball.current.vx;
     ball.current.y += ball.current.vy;
 
@@ -90,21 +95,21 @@ const PinballGame = () => {
 
     // Update flippers with smooth animation
     if (leftFlipper.current.isPressed) {
-      leftFlipper.current.targetAngle = -1.2;
+      leftFlipper.current.targetAngle = -1.5;
     } else {
-      leftFlipper.current.targetAngle = -0.4;
+      leftFlipper.current.targetAngle = -0.5;
     }
 
     if (rightFlipper.current.isPressed) {
-      rightFlipper.current.targetAngle = Math.PI - 1.2;
+      rightFlipper.current.targetAngle = Math.PI - 1.5;
     } else {
-      rightFlipper.current.targetAngle = Math.PI - 0.4;
+      rightFlipper.current.targetAngle = Math.PI - 0.5;
     }
 
     leftFlipper.current.angle +=
-      (leftFlipper.current.targetAngle - leftFlipper.current.angle) * 0.15;
+      (leftFlipper.current.targetAngle - leftFlipper.current.angle) * 0.2;
     rightFlipper.current.angle +=
-      (rightFlipper.current.targetAngle - rightFlipper.current.angle) * 0.15;
+      (rightFlipper.current.targetAngle - rightFlipper.current.angle) * 0.2;
 
     // Wall collisions with clean bounces
     if (ball.current.x - ball.current.radius < 0) {
@@ -128,6 +133,28 @@ const PinballGame = () => {
         resetBall();
         return prev - 1;
       });
+    }
+
+    // Custom walls (launch lane)
+    walls.current.forEach((wall) => {
+      if (
+        ball.current.x + ball.current.radius > wall.x &&
+        ball.current.x - ball.current.radius < wall.x + wall.width &&
+        ball.current.y + ball.current.radius > wall.y &&
+        ball.current.y - ball.current.radius < wall.y + wall.height
+      ) {
+        ball.current.vx *= -0.8;
+      }
+    });
+
+    // Center post collision
+    const postDx = ball.current.x - centerPost.current.x;
+    const postDy = ball.current.y - centerPost.current.y;
+    if (
+      Math.sqrt(postDx * postDx + postDy * postDy) <
+      ball.current.radius + centerPost.current.radius
+    ) {
+      ball.current.vy *= -0.8;
     }
 
     // Bumper collisions with artistic feedback
@@ -165,10 +192,10 @@ const PinballGame = () => {
       const dy = ball.current.y - flipper.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < ball.current.radius + 40) {
+      if (distance < ball.current.radius + 45) {
         if (flipper.isPressed) {
-          ball.current.vy = -10;
-          ball.current.vx += (flipper === leftFlipper.current ? 1 : -1) * 2;
+          ball.current.vy = -12;
+          ball.current.vx += flipper === leftFlipper.current ? 1.5 : -1.5;
           setScore((prev) => prev + 10);
         }
       }
@@ -200,6 +227,24 @@ const PinballGame = () => {
     ctx.lineTo(800, 700);
     ctx.lineTo(0, 700);
     ctx.stroke();
+
+    // Draw custom walls
+    walls.current.forEach((wall) => {
+      ctx.fillStyle = "#333";
+      ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
+    });
+
+    // Draw center post
+    ctx.beginPath();
+    ctx.arc(
+      centerPost.current.x,
+      centerPost.current.y,
+      centerPost.current.radius,
+      0,
+      Math.PI * 2
+    );
+    ctx.fillStyle = "#4ecdc4";
+    ctx.fill();
 
     // Draw bumpers with artistic styling
     bumpers.current.forEach((bumper) => {
@@ -269,12 +314,13 @@ const PinballGame = () => {
 
     // Elegant UI
     ctx.fillStyle = "#fff";
-    ctx.font = '16px "Courier New", monospace';
-    ctx.fillText(`SCORE: ${score.toString().padStart(6, "0")}`, 30, 30);
-    ctx.fillText(`LIVES: ${lives}`, 30, 50);
+    ctx.font = 'bold 18px "Courier New", monospace';
+    ctx.textAlign = "center";
+    ctx.fillText(`SCORE: ${score.toString().padStart(6, "0")}`, 400, 30);
+    ctx.fillText(`LIVES: ${lives}`, 400, 50);
     ctx.fillText(
       `TIME: ${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, "0")}`,
-      30,
+      400,
       70
     );
 
@@ -290,6 +336,9 @@ const PinballGame = () => {
 
       ctx.font = '24px "Courier New", monospace';
       ctx.fillText(`FINAL SCORE: ${score}`, 400, 300);
+
+      // Pulsing restart text
+      ctx.fillStyle = `rgba(255, 255, 255, ${0.7 + Math.sin(time * 0.1) * 0.3})`;
       ctx.fillText("CLICK TO RESTART", 400, 350);
     } else if (!gameStarted) {
       ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
