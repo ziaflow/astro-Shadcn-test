@@ -9,6 +9,7 @@ import {Certifications} from "./components/Certifications";
 import {Gameboy} from "./components/Gameboy";
 import './scss/snes.scss';
 import "./App.css";
+import {ChrisMcKenzie} from "@/components/ChrisMcKenzie.tsx";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <About />
         <Skills />
         <Projects />
+        <ChrisMcKenzie />
         <Gameboy />
         <Certifications />
         <Footer />
