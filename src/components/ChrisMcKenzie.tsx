@@ -5,7 +5,7 @@ export const ChrisMcKenzie = () => {
     return (
         <section
             className="container my-16"
-            id="chrisMcKenzie"
+            id="chrismckenzie"
         >
             <h2 className="snes-container-title has-ocean-underline mb-8">
                 This is funny
@@ -13,7 +13,7 @@ export const ChrisMcKenzie = () => {
             <h3 className="mb-8">
                 I like it a lot.
             </h3>
-            <Card key='chrismckenzie'>
+            <Card>
                 <iframe src="https://chrismckenzie.com/" width="100%" height="640"></iframe>
                 <CardFooter>
                     <a

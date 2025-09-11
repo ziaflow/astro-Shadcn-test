@@ -12,8 +12,8 @@ const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
   const targetId = event.target.value;
   const element = document.getElementById(targetId);
   if (element) {
-    const yOffset = -120; // Offset in Pixeln (Anpassung nach Bedarf)
-    const y = element.getBoundingClientRect().top + window.screenY + yOffset;
+    const yOffset = 0;
+    const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
     window.scrollTo({ top: y, behavior: 'smooth' });
   }
 };
@@ -71,6 +71,7 @@ export const Navbar = () => {
                   <option value="hero">Start</option>
                   <option value="skills">Skills</option>
                   <option value="projects">Projects</option>
+                  <option value="chrismckenzie">ChrisMcKenzie</option>
                   <option value="gameboy">Gameboy</option>
                   <option value="certifications">Certifications</option>
                   <option value="footer">End</option>
