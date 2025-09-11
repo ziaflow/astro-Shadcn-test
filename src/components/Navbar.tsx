@@ -1,146 +1,95 @@
-import { useState } from "react";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import React, { useState, useEffect } from "react";
+import { useTheme } from "@/components/theme-provider.tsx";
 
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { buttonVariants } from "./ui/button";
-import { Menu } from "lucide-react";
-import { ModeToggle } from "./mode-toggle";
-import { LogoIcon } from "./Icons";
+const goToTop = () => {
+  window.scroll({
+    top: 0,
+    left: 0,
+  });
+};
 
-interface RouteProps {
-  href: string;
-  label: string;
-}
-
-const routeList: RouteProps[] = [
-  {
-    href: "#features",
-    label: "Features",
-  },
-  {
-    href: "#testimonials",
-    label: "Testimonials",
-  },
-  {
-    href: "#pricing",
-    label: "Pricing",
-  },
-  {
-    href: "#faq",
-    label: "FAQ",
-  },
-];
+const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const targetId = event.target.value;
+  const element = document.getElementById(targetId);
+  if (element) {
+    const yOffset = 0;
+    const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+};
 
 export const Navbar = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { theme, setTheme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setTheme(event.target.value as "light" | "dark");
+  };
+
+  const themeValue = theme === "system"
+      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : theme;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+
+      if (window.scrollY < lastScrollY) {
+        setIsScrolled(false);
+      }
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+
   return (
-    <header className="sticky border-b-[1px] top-0 z-40 w-full bg-white dark:border-b-slate-700 dark:bg-background">
-      <NavigationMenu className="mx-auto">
-        <NavigationMenuList className="container h-14 px-4 w-screen flex justify-between ">
-          <NavigationMenuItem className="font-bold flex">
-            <a
-              rel="noreferrer noopener"
-              href="/"
-              className="ml-2 font-bold text-xl flex"
-            >
-              <LogoIcon />
-              ShadcnUI/React
-            </a>
-          </NavigationMenuItem>
-
-          {/* mobile */}
-          <span className="flex md:hidden">
-            <ModeToggle />
-
-            <Sheet
-              open={isOpen}
-              onOpenChange={setIsOpen}
-            >
-              <SheetTrigger className="px-2">
-                <Menu
-                  className="flex md:hidden h-5 w-5"
-                  onClick={() => setIsOpen(true)}
-                >
-                  <span className="sr-only">Menu Icon</span>
-                </Menu>
-              </SheetTrigger>
-
-              <SheetContent side={"left"}>
-                <SheetHeader>
-                  <SheetTitle className="font-bold text-xl">
-                    Shadcn/React
-                  </SheetTitle>
-                </SheetHeader>
-                <nav className="flex flex-col justify-center items-center gap-2 mt-4">
-                  {routeList.map(({ href, label }: RouteProps) => (
-                    <a
-                      rel="noreferrer noopener"
-                      key={label}
-                      href={href}
-                      onClick={() => setIsOpen(false)}
-                      className={buttonVariants({ variant: "ghost" })}
-                    >
-                      {label}
-                    </a>
-                  ))}
-                  <a
-                    rel="noreferrer noopener"
-                    href="https://github.com/leoMirandaa/shadcn-landing-page.git"
-                    target="_blank"
-                    className={`w-[110px] border ${buttonVariants({
-                      variant: "secondary",
-                    })}`}
-                  >
-                    <GitHubLogoIcon className="mr-2 w-5 h-5" />
-                    Github
-                  </a>
-                </nav>
-              </SheetContent>
-            </Sheet>
-          </span>
-
-          {/* desktop */}
-          <nav className="hidden md:flex gap-2">
-            {routeList.map((route: RouteProps, i) => (
-              <a
-                rel="noreferrer noopener"
-                href={route.href}
-                key={i}
-                className={`text-[17px] ${buttonVariants({
-                  variant: "ghost",
-                })}`}
-              >
-                {route.label}
+      <header className={`sticky top-0 z-40 w-full bg-card transition-all ${isScrolled ? "transform -translate-y-full" : ""}`}>
+        <div className="md:py-4 py-6 md:px-8 w-[95vw] flex justify-between flex-col md:flex-row gap-4">
+          <div>
+            <h1 className="ml-8 my-auto font-bold md:text-4xl text-base text-snes-nature dark:text-snes-grey">
+              <a rel="noreferrer noopener" onClick={goToTop}>
+                TrstnJmn
               </a>
-            ))}
-          </nav>
-
-          <div className="hidden md:flex gap-2">
-            <a
-              rel="noreferrer noopener"
-              href="https://github.com/leoMirandaa/shadcn-landing-page.git"
-              target="_blank"
-              className={`border ${buttonVariants({ variant: "secondary" })}`}
-            >
-              <GitHubLogoIcon className="mr-2 w-5 h-5" />
-              Github
-            </a>
-
-            <ModeToggle />
+            </h1>
           </div>
-        </NavigationMenuList>
-      </NavigationMenu>
-    </header>
+
+          <div className="flex md:flex-row flex-col gap-8 ml-8">
+            <div className="snes-form-group md:w-[400px] w-full">
+              <div className="snes-input is-success dark:bg-snes-grey">
+                <select onChange={handleChange} className="text-sm">
+                  <option value="" disabled selected>Select Navi</option>
+                  <option value="hero">Start</option>
+                  <option value="skills">Skills</option>
+                  <option value="projects">Projects</option>
+                  <option value="chrismckenzie">ChrisMcKenzie</option>
+                  <option value="gameboy">Gameboy</option>
+                  <option value="certifications">Certifications</option>
+                  <option value="footer">End</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="snes-form-group md:w-[220px] w-full">
+              <div className="snes-input is-warning dark:bg-snes-grey">
+                <select onChange={handleThemeChange} value={themeValue}>
+                  <option value="light">Light</option>
+                  <option value="dark">Night</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr className="bg-black h-1" />
+      </header>
   );
 };

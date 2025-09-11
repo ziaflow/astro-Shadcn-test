@@ -9,15 +9,27 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          default: "border:none",
+          snesNature: "snes-button p-1",
+          snesPlumber:
+          "snes-button has-plumber-color p-1",
+          snesSunshine:
+          "snes-button has-sunshine-color p-1",
+          snesOcean:
+          "snes-button has-ocean-color p-1",
+          snesTurquoise:
+          "snes-button has-turquoise-color p-1",
+          snesPhantom:
+          "snes-button has-phantom-color p-1",
+          snesRose:
+          "snes-button has-rose-color p-1",
+          snesGalaxy:
+          "snes-button has-galaxy-color p-1",
+          snesEmber:
+          "snes-button has-ember-color p-1",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "snes-button",
+        link: "snes-link",
       },
       size: {
         default: "h-10 px-4 py-2",

@@ -27,10 +27,10 @@ export const ScrollToTop = () => {
       {showTopBtn && (
         <Button
           onClick={goToTop}
-          className="fixed bottom-4 right-4 opacity-90 shadow-md"
-          size="icon"
+          variant="snesNature"
+          className="fixed bottom-8 right-16 opacity-90"
         >
-          <ArrowUpToLine className="h-4 w-4" />
+          <ArrowUpToLine  />
         </Button>
       )}
     </>
