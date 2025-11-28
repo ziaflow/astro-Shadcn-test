@@ -1,0 +1,45 @@
+---
+import { MobileNav } from "./MobileNav";
+import { buttonVariants, Button } from "@/components/ui/button";
+import { BookingWidget } from "@/components/widgets/BookingWidget";
+
+const routeList = [
+  { href: "/", label: "Home" },
+  { href: "#services", label: "Services" },
+  { href: "#case-studies", label: "Case Studies" },
+  { href: "#pricing", label: "Pricing" },
+  { href: "#blog", label: "Blog" },
+  { href: "#contact", label: "Contact" },
+];
+---
+
+<header class="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="container flex h-14 items-center justify-between">
+    <div class="mr-4 hidden md:flex">
+      <a href="/" class="mr-6 flex items-center space-x-2 font-bold text-xl">
+        ZiaFlow
+      </a>
+      <nav class="flex items-center space-x-6 text-sm font-medium">
+        {routeList.map((route) => (
+          <a
+            href={route.href}
+            class="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+            {route.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+
+    {/* Mobile Toggle & Logo */}
+    <div class="flex items-center space-x-2 md:hidden">
+         <MobileNav client:visible />
+         <a href="/" class="font-bold text-lg">ZiaFlow</a>
+    </div>
+
+    {/* Desktop CTA */}
+    <div class="hidden md:flex items-center space-x-4">
+       <BookingWidget client:idle />
+    </div>
+  </div>
+</header>
