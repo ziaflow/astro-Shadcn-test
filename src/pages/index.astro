@@ -142,4 +142,13 @@ const schema = {
   <FeaturesFAQ />
   <FAQ client:visible />
   <Footer />
+
+  <!-- Mobile Sticky Call Button -->
+  <div class="fixed bottom-4 right-4 left-4 z-50 md:hidden">
+    <a href="tel:+15555555555">
+      <Button className="w-full shadow-lg" size="lg" data-event="phone_click">
+        Call Now: (555) 555-5555
+      </Button>
+    </a>
+  </div>
 </Layout>

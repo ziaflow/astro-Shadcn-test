@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+      - refactor-astro-landing-page
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
+      - refactor-astro-landing-page
 
 jobs:
   build_and_deploy_job:
