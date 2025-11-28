@@ -1,0 +1,49 @@
+---
+import { Button } from "@/components/ui/button";
+
+const steps = [
+  {
+    step: "01",
+    title: "Discovery",
+    description: "We analyze your current market position, competitors, and opportunities.",
+  },
+  {
+    step: "02",
+    title: "Roadmap",
+    description: "We build a custom 90-day growth plan tailored to your specific goals.",
+  },
+  {
+    step: "03",
+    title: "Launch & Optimize",
+    description: "We execute the strategy and continuously refine for maximum ROI.",
+  },
+];
+---
+
+<section class="container py-24 sm:py-32">
+  <div class="text-center md:w-3/4 mx-auto space-y-4 mb-16">
+    <h2 class="text-3xl md:text-4xl font-bold">How It Works</h2>
+    <p class="text-xl text-muted-foreground">
+      A simple, transparent process to get you results.
+    </p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-8 relative">
+    {/* Connecting line for desktop - simplified visual */}
+    <div class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-muted -z-10"></div>
+
+    {steps.map((item) => (
+      <div class="bg-background pt-4 md:pt-0 relative flex flex-col items-center text-center space-y-4">
+        <div class="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold ring-8 ring-background">
+          {item.step}
+        </div>
+        <h3 class="text-xl font-bold">{item.title}</h3>
+        <p class="text-muted-foreground">{item.description}</p>
+      </div>
+    ))}
+  </div>
+
+  <div class="mt-16 flex justify-center">
+    <Button size="lg">See Sample 30/60/90 Plan</Button>
+  </div>
+</section>

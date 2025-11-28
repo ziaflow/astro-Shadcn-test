@@ -1,0 +1,50 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="bg-muted text-muted-foreground py-12 border-t">
+  <div class="container grid md:grid-cols-4 gap-8">
+    <div class="space-y-4">
+      <h3 class="text-xl font-bold text-foreground">ZiaFlow</h3>
+      <p class="text-sm">
+        Helping Phoenix home service businesses grow with data-driven marketing.
+      </p>
+    </div>
+
+    <div>
+      <h4 class="font-semibold text-foreground mb-4">Contact</h4>
+      <ul class="space-y-2 text-sm">
+        <li>123 Market St, Suite 100</li>
+        <li>Phoenix, AZ 85001</li>
+        <li>
+            <a href="tel:+15555555555" class="hover:text-primary transition-colors">(555) 555-5555</a>
+        </li>
+        <li>
+            <a href="mailto:hello@ziaflow.com" class="hover:text-primary transition-colors">hello@ziaflow.com</a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-semibold text-foreground mb-4">Services</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#" class="hover:text-primary transition-colors">Google LSAs</a></li>
+        <li><a href="#" class="hover:text-primary transition-colors">SEO & GMB</a></li>
+        <li><a href="#" class="hover:text-primary transition-colors">Web Design</a></li>
+        <li><a href="#" class="hover:text-primary transition-colors">Automation</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-semibold text-foreground mb-4">Legal</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+        <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container mt-12 pt-8 border-t border-muted-foreground/20 text-center text-sm">
+    &copy; {currentYear} ZiaFlow. All rights reserved.
+  </div>
+</footer>

@@ -1,0 +1,46 @@
+---
+import { Check, XCircle } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
+const painPoints = [
+  {
+    title: "Feast-or-famine leads",
+    description: "Inconsistent lead flow makes it impossible to plan for growth or hiring.",
+  },
+  {
+    title: "High ad spend, low quality",
+    description: "Spending thousands on clicks that don't convert into paying customers.",
+  },
+  {
+    title: "Invisible in search results",
+    description: "Your competitors are dominating the Local Pack while you're on page 2.",
+  },
+  {
+    title: "No time for marketing",
+    description: "You're too busy running the business to manage campaigns and SEO.",
+  },
+];
+---
+
+<section class="container py-24 sm:py-32 space-y-8">
+  <div class="text-center md:w-3/4 mx-auto space-y-4">
+    <h2 class="text-3xl md:text-4xl font-bold">Stop Losing Revenue to Inefficiency</h2>
+    <p class="text-xl text-muted-foreground">
+      Most home service businesses struggle with the same marketing bottlenecks.
+    </p>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+    {painPoints.map((point) => (
+      <Card className="bg-muted/50 border-none shadow-none">
+        <CardHeader>
+          <XCircle className="w-12 h-12 text-destructive mb-4" />
+          <CardTitle>{point.title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="text-muted-foreground">{point.description}</p>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+</section>

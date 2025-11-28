@@ -1,0 +1,48 @@
+---
+import { Star } from "lucide-react";
+
+const metrics = [
+  { value: "40%+", label: "Avg Lead Increase" },
+  { value: "500+", label: "Businesses Served" },
+  { value: "4.9/5", label: "Client Satisfaction" },
+];
+
+const logos = [
+  "Logo 1", "Logo 2", "Logo 3", "Logo 4", "Logo 5"
+];
+---
+
+<section class="container py-24 sm:py-32 bg-muted/30">
+  <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <div class="space-y-8">
+       <h2 class="text-3xl font-bold">Trusted by Home Service Pros</h2>
+       <div class="flex gap-2 text-yellow-500">
+          {[...Array(5)].map(() => <Star className="fill-current w-6 h-6" />)}
+       </div>
+       <p class="text-lg text-muted-foreground">
+         "ZiaFlow transformed our business. We went from wondering where the next job was coming from to being booked out weeks in advance."
+       </p>
+       <div class="font-semibold">- Owner, Arizona HVAC Pros</div>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-8">
+        {metrics.map(m => (
+            <div class="text-center p-6 bg-background rounded-lg shadow-sm">
+                <div class="text-3xl font-bold text-primary mb-2">{m.value}</div>
+                <div class="text-sm text-muted-foreground font-medium">{m.label}</div>
+            </div>
+        ))}
+    </div>
+  </div>
+
+  <div class="mt-16 pt-8 border-t border-muted-foreground/10">
+      <p class="text-center text-sm font-semibold text-muted-foreground mb-6">POWERING GROWTH FOR</p>
+      <div class="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale">
+          {/* Placeholders for logos */}
+          <div class="text-xl font-bold">ACME Plumbing</div>
+          <div class="text-xl font-bold">Spark Electric</div>
+          <div class="text-xl font-bold">GreenThumb Landscaping</div>
+          <div class="text-xl font-bold">Desert Air</div>
+      </div>
+  </div>
+</section>
