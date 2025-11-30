@@ -1,14 +1,11 @@
 ---
 import { Star } from "lucide-react";
+import { Logo1, Logo2, Logo3, Logo4, Logo5 } from "./Logos";
 
 const metrics = [
   { value: "40%+", label: "Avg Lead Increase" },
   { value: "500+", label: "Businesses Served" },
   { value: "4.9/5", label: "Client Satisfaction" },
-];
-
-const logos = [
-  "Logo 1", "Logo 2", "Logo 3", "Logo 4", "Logo 5"
 ];
 ---
 
@@ -36,13 +33,13 @@ const logos = [
   </div>
 
   <div class="mt-16 pt-8 border-t border-muted-foreground/10">
-      <p class="text-center text-sm font-semibold text-muted-foreground mb-6">POWERING GROWTH FOR</p>
-      <div class="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale">
-          {/* Placeholders for logos */}
-          <div class="text-xl font-bold">ACME Plumbing</div>
-          <div class="text-xl font-bold">Spark Electric</div>
-          <div class="text-xl font-bold">GreenThumb Landscaping</div>
-          <div class="text-xl font-bold">Desert Air</div>
+      <p class="text-center text-sm font-semibold text-muted-foreground mb-6 uppercase tracking-wider">Powering Growth For</p>
+      <div class="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+          <Logo1 className="h-8 w-auto text-primary" />
+          <Logo2 className="h-8 w-auto text-primary" />
+          <Logo3 className="h-8 w-auto text-primary" />
+          <Logo4 className="h-8 w-auto text-primary" />
+          <Logo5 className="h-8 w-auto text-primary" />
       </div>
   </div>
 </section>

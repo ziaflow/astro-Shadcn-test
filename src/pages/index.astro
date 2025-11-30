@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from "@/components/widgets/Navbar.astro";
 import { Button } from "@/components/ui/button";
 import { BookingWidget } from "@/components/widgets/BookingWidget";
+import { LeadMagnetWidget } from "@/components/widgets/LeadMagnetWidget";
+import { ExitIntentPopup } from "@/components/widgets/ExitIntentPopup";
 import PainPoints from "@/components/widgets/PainPoints.astro";
 import Services from "@/components/widgets/Services.astro";
 import HowItWorks from "@/components/widgets/HowItWorks.astro";
@@ -105,9 +107,7 @@ const schema = {
           triggerClassName="w-full md:w-1/3"
         />
 
-        <Button variant="outline" className="w-full md:w-1/3" data-event="hero_cta_click">
-            Download Free LSA Guide
-        </Button>
+        <LeadMagnetWidget client:idle triggerClassName="w-full md:w-1/3" />
       </div>
 
       <div class="md:hidden mt-4">
@@ -142,6 +142,8 @@ const schema = {
   <FeaturesFAQ />
   <FAQ client:visible />
   <Footer />
+
+  <ExitIntentPopup client:idle />
 
   <!-- Mobile Sticky Call Button -->
   <div class="fixed bottom-4 right-4 left-4 z-50 md:hidden">
