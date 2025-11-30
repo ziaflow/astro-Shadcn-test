@@ -1,0 +1,58 @@
+---
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
+const caseStudies = [
+  {
+    company: "Desert Air HVAC",
+    before: "12 leads/month, high CPA",
+    after: "48 leads/month, CPA cut by 40%",
+    description: "Revamped their LSA profile and implemented automated lead follow-up.",
+  },
+  {
+    company: "Sparky's Electric",
+    before: "No online presence",
+    after: "Ranked #1 in Local Pack within 90 days",
+    description: "Built a high-converting landing page and optimized GMB profile.",
+  },
+  {
+    company: "GreenThumb Landscaping",
+    before: "Reliance on referrals only",
+    after: "Booked out 6 weeks in advance",
+    description: "Launched targeted Google Ads and reputation management campaign.",
+  },
+];
+---
+
+<section id="case-studies" class="container py-24 sm:py-32">
+  <div class="text-center md:w-3/4 mx-auto space-y-4 mb-16">
+    <h2 class="text-3xl md:text-4xl font-bold">Real Results for Local Pros</h2>
+    <p class="text-xl text-muted-foreground">
+      Don't just take our word for it. See what we've done for others.
+    </p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-8">
+    {caseStudies.map((study) => (
+      <Card>
+        <CardHeader>
+          <CardTitle>{study.company}</CardTitle>
+          <Badge variant="secondary" className="w-fit mt-2">Success Story</Badge>
+        </CardHeader>
+        <CardContent class="space-y-4">
+           <div>
+              <div class="text-sm font-semibold text-muted-foreground">Before</div>
+              <div class="text-red-500 font-medium">{study.before}</div>
+           </div>
+           <div>
+              <div class="text-sm font-semibold text-muted-foreground">After</div>
+              <div class="text-green-600 font-bold text-lg">{study.after}</div>
+           </div>
+           <p class="text-sm text-muted-foreground pt-4 border-t">
+             {study.description}
+           </p>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+</section>

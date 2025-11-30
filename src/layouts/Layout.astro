@@ -1,0 +1,35 @@
+---
+import "@/styles/globals.css";
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = "Phoenix Home Service Marketing" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+        <slot name="head" />
+        <!-- Deferred Analytics Scripts -->
+        <script is:inline>
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    // Placeholder for GA4/Clarity
+                    console.log("Loading Analytics...");
+                }, 2000);
+            });
+        </script>
+	</head>
+	<body class="min-h-screen bg-background font-sans antialiased">
+		<slot />
+	</body>
+</html>

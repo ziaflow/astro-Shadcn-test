@@ -1,0 +1,156 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from "@/components/widgets/Navbar.astro";
+import { Button } from "@/components/ui/button";
+import { BookingWidget } from "@/components/widgets/BookingWidget";
+import { LeadMagnetWidget } from "@/components/widgets/LeadMagnetWidget";
+import { ExitIntentPopup } from "@/components/widgets/ExitIntentPopup";
+import PainPoints from "@/components/widgets/PainPoints.astro";
+import Services from "@/components/widgets/Services.astro";
+import HowItWorks from "@/components/widgets/HowItWorks.astro";
+import TrustRow from "@/components/widgets/TrustRow.astro";
+import CaseStudies from "@/components/widgets/CaseStudies.astro";
+import Pricing from "@/components/widgets/Pricing.astro";
+import FeaturesFAQ from "@/components/widgets/FeaturesFAQ.astro";
+import { FAQ } from "@/components/widgets/FAQ";
+import Footer from "@/components/widgets/Footer.astro";
+import { Image } from "astro:assets";
+import pilotImage from "../assets/pilot.png";
+
+const heroImage = pilotImage;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "name": "ZiaFlow",
+      "image": "https://ziaflow.com/logo.png",
+      "telephone": "+15555555555",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "123 Market St, Suite 100",
+        "addressLocality": "Phoenix",
+        "addressRegion": "AZ",
+        "postalCode": "85001",
+        "addressCountry": "US"
+      },
+      "priceRange": "$$$"
+    },
+    {
+      "@type": "Service",
+      "name": "Home Service Marketing",
+      "provider": {
+        "@type": "LocalBusiness",
+        "name": "ZiaFlow"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Phoenix"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What industries do you specialize in?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We focus exclusively on home service businesses: HVAC, Plumbing, Electrical, Landscaping, Roofing, and Pest Control."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I have to sign a long-term contract?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. We work on a month-to-month basis."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout
+  title="Phoenix Home Service Marketing — Google LSAs & Google Business Profile"
+  description="40%+ more qualified leads for Arizona HVAC, plumbing, electrical and landscaping businesses. Book your free strategy call today."
+>
+  <!-- Schema -->
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
+
+  <!-- Preload LCP Image -->
+  <link rel="preload" as="image" href={heroImage.src} slot="head" />
+
+  <Navbar />
+
+  <section class="container grid lg:grid-cols-2 place-items-center py-20 md:py-32 gap-10">
+    <div class="text-center lg:text-start space-y-6">
+      <main class="text-5xl md:text-6xl font-bold">
+        <h1 class="inline">
+          <span class="inline bg-gradient-to-r from-[#F596D3]  to-[#D247BF] text-transparent bg-clip-text">
+            Phoenix Home Service Marketing
+          </span>{" "}
+          — Google LSAs & Google Business Profile
+        </h1>
+      </main>
+
+      <p class="text-xl text-muted-foreground md:w-10/12 mx-auto lg:mx-0">
+        40%+ more qualified leads for Arizona HVAC, plumbing, electrical and landscaping businesses.
+      </p>
+
+      <div class="space-y-4 md:space-y-0 md:space-x-4">
+        <BookingWidget
+          client:idle
+          triggerClassName="w-full md:w-1/3"
+        />
+
+        <LeadMagnetWidget client:idle triggerClassName="w-full md:w-1/3" />
+      </div>
+
+      <div class="md:hidden mt-4">
+        <a href="tel:+15555555555" class="text-primary font-semibold underline" data-event="phone_click">
+            Call Us: (555) 555-5555
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero Image -->
+    <div class="z-10">
+      <Image
+        src={heroImage}
+        alt="Digital Marketing Strategy"
+        width={600}
+        height={600}
+        loading="eager"
+        fetchpriority="high"
+        class="w-full h-auto object-contain"
+      />
+    </div>
+
+    <div class="shadow"></div>
+  </section>
+
+  <PainPoints />
+  <Services />
+  <HowItWorks />
+  <TrustRow />
+  <CaseStudies />
+  <Pricing />
+  <FeaturesFAQ />
+  <FAQ client:visible />
+  <Footer />
+
+  <ExitIntentPopup client:idle />
+
+  <!-- Mobile Sticky Call Button -->
+  <div class="fixed bottom-4 right-4 left-4 z-50 md:hidden">
+    <a href="tel:+15555555555">
+      <Button className="w-full shadow-lg" size="lg" data-event="phone_click">
+        Call Now: (555) 555-5555
+      </Button>
+    </a>
+  </div>
+</Layout>
